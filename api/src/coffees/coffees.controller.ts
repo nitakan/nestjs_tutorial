@@ -1,6 +1,5 @@
 import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Query, Req, Res, SetMetadata, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Request } from 'express';
-import { RolesGuard } from 'src/guard/role.guard';
 import { LoggingInterceptor } from 'src/interceptor/logging.intercepter';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
@@ -53,6 +52,5 @@ export class CoffeesController {
         }
         return this.coffeesService.remove(id);
     }
-
 }
 

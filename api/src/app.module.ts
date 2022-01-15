@@ -8,9 +8,12 @@ import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/model/jwt/jwt-auth.guard';
 import { RolesGuard } from './decorator/role.decorator';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
-  imports: [CoffeesModule, TestModule, AuthModule, UserModule],
+  imports: [CoffeesModule, TestModule, AuthModule, UserModule, ThrottlerModule.forRoot({
+    ttl: 60, limit: 10,
+  })],
   controllers: [AppController],
   providers: [AppService, {
     provide: APP_GUARD,
@@ -18,6 +21,9 @@ import { RolesGuard } from './decorator/role.decorator';
   }, {
     provide: APP_GUARD,
     useClass: RolesGuard,
+  }, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard,
   }],
 })
 export class AppModule implements NestModule {

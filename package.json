@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@nestjs/throttler": "^2.0.0",
+    "@types/csurf": "^1.11.2",
+    "csurf": "^1.11.0",
+    "helmet": "^5.0.1"
+  }
+}

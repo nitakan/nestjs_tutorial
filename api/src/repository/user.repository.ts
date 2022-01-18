@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { UserRepository } from "src/domain/repository_interface/user.repository";
 import { BaseRepository } from "./base.repository";
 import * as bcrypt from "bcrypt";
 import { CreateUser, User, UserRole } from "src/domain/entity/user.entity";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class UserRepositoryImpl extends BaseRepository implements UserRepository {
@@ -55,44 +56,56 @@ export class UserRepositoryImpl extends BaseRepository implements UserRepository
         }).then(list => list.map(item => new User(item.id, item.nickname, item.email, [])));
     }
     async create(user: CreateUser): Promise<User | null> {
+
         const roles = await this.getRoles(user.isAdmin);
         const salt = await bcrypt.genSalt(10);
 
         const hashedPassword = await bcrypt.hash(user.password, salt);
         const r = roles.map(role => {
-            return {role_id: role.id}
+            return { role_id: role.id }
         });
-        const created = await this.users.create({
-            include: {
-                user_securities: true,
-                user_roles: {
-                    include: {
-                        roles: true,
+        try {
+            const created = await this.users.create({
+                include: {
+                    user_securities: true,
+                    user_roles: {
+                        include: {
+                            roles: true,
+                        }
+                    },
+                },
+                data: {
+                    email: user.email,
+                    nickname: user.nickname || '',
+                    user_securities: {
+                        create: {
+                            password: hashedPassword,
+                        }
+                    },
+                    user_roles: {
+                        createMany: { data: r }
                     }
                 },
-            },
-            data: {
-                email: user.email,
-                nickname: user.nickname || '',
-                user_securities: {
-                    create: {
-                        password: hashedPassword,
-                    }
-                },
-                user_roles: {
-                    createMany: { data: r }
-                }
-            },
-        });
+            });
 
-        if (created) {
-            return new User(
-                created.id,
-                created.nickname,
-                created.email,
-                created.user_roles.map(e => new UserRole(e.roles.id, e.roles.name, e.roles.is_admin == 1)),
-            );
-        }
+            if (created) {
+                return new User(
+                    created.id,
+                    created.nickname,
+                    created.email,
+                    created.user_roles.map(e => new UserRole(e.roles.id, e.roles.name, e.roles.is_admin == 1)),
+                );
+            }
+        } catch (e) {
+            console.log(e);
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                throw new UnprocessableEntityException({
+                    property: e.meta,
+                    code: e.code,
+                });
+            }
+            throw new BadRequestException();
+        }     
 
 
         return null;

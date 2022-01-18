@@ -10,9 +10,11 @@ import { JwtAuthGuard } from './auth/model/jwt/jwt-auth.guard';
 import { RolesGuard } from './decorator/role.decorator';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
+import { RepositoryModule } from './repository/repository.module';
 
 @Module({
   imports: [
+    RepositoryModule,
     CoffeesModule,
     TestModule,
     AuthModule,

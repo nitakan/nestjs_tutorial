@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Query, Req, Res, SetMetadata, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, Req, UseInterceptors } from '@nestjs/common';
 import { Request } from 'express';
 import { LoggingInterceptor } from 'src/interceptor/logging.intercepter';
 import { CoffeesService } from './coffees.service';
@@ -16,7 +16,6 @@ export class CoffeesController {
         const { limit, page } = paginationQuery;
         return this.coffeesService.getCoffees(page, limit);
     }
-
 
     @Get(':id')
     find(@Param('id') id: string, @Req() req: Request) {

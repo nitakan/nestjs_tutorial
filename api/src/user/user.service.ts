@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { Role } from 'src/decorator/role.decorator';
-import { AuthUser, User } from './model/user.model';
+import { CreateUser, User } from 'src/domain/entity/user.entity';
+import { UserRepository } from 'src/domain/repository_interface/user.repository';
 
 @Injectable()
 export class UserService {
-    private readonly users: Array<AuthUser> = [
-        new AuthUser('1', 'ADMIN USER', 'admin@nitakan.net', 'password', [Role.Admin, Role.User]),
-        new AuthUser('2', 'TEST USER', 'test1@nitakan.net', 'password', [Role.User]),
-    ];
-
-    async findOne(email: string): Promise<AuthUser> {
-        return this.users.find(user => user.email == email);
+    constructor(private readonly userRepository: UserRepository) {}
+    async signIn(email: string, password: string): Promise<User> {
+        return await this.userRepository.check(email, password);
     }
 
-    async allUsers(): Promise<Array<User>> {
-        return this.users.map(user => user.toUser());
+    async signUp(user: CreateUser): Promise<User> {
+        return await this.userRepository.create(user);
+    }
+
+    async allUsers(): Promise<User[]> {
+        return await this.userRepository.all();
     }
 }

@@ -9,22 +9,37 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/model/jwt/jwt-auth.guard';
 import { RolesGuard } from './decorator/role.decorator';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [CoffeesModule, TestModule, AuthModule, UserModule, ThrottlerModule.forRoot({
-    ttl: 60, limit: 10,
-  })],
-  controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_GUARD,
-    useClass: JwtAuthGuard,
-  }, {
-    provide: APP_GUARD,
-    useClass: RolesGuard,
-  }, {
-    provide: APP_GUARD,
-    useClass: ThrottlerGuard,
-  }],
+  imports: [
+    CoffeesModule,
+    TestModule,
+    AuthModule,
+    UserModule,
+    ThrottlerModule.forRoot({
+      ttl: 60, limit: 10,
+    }),
+    ConfigModule.forRoot(),
+  ],
+  controllers: [
+    AppController,
+  ],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

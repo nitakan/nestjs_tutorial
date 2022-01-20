@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post, UseInterceptors } from '@nestjs/common';
 import { ReqCtx } from 'src/decorator/request.decorator';
-import { CreateCoffee, CreateStock } from 'src/domain/entity/coffee.model';
 import { LoggingInterceptor } from 'src/interceptor/logging.intercepter';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';

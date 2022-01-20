@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException, Scope } from '@nestjs/common';
-import { Coffee, CoffeeStocks, CreateCoffee, CreateStock, Stock } from '../domain/entity/coffee.model';
+import { Injectable } from '@nestjs/common';
+import { CoffeeStocks, CreateCoffee, CreateStock } from '../domain/entity/coffee.model';
 import { CoffeeRepository, StockRepository } from 'src/domain/repository_interface/coffee.repository';
 import { Pagination, RequestContext } from 'src/domain/entity/request.entity';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';

@@ -2,12 +2,10 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoffeesModule } from './coffees/coffees.module';
-import { TestModule } from './test/test.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/model/jwt/jwt-auth.guard';
-import { RolesGuard } from './decorator/role.decorator';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
 import { RepositoryModule } from './repository/repository.module';
@@ -16,7 +14,6 @@ import { RepositoryModule } from './repository/repository.module';
   imports: [
     RepositoryModule,
     CoffeesModule,
-    TestModule,
     AuthModule,
     UserModule,
     ThrottlerModule.forRoot({
@@ -32,10 +29,6 @@ import { RepositoryModule } from './repository/repository.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
     },
     {
       provide: APP_GUARD,

@@ -1,11 +1,13 @@
 import { Global, Module } from '@nestjs/common';
+import { RepositoryModule } from 'src/repository/repository.module';
 import { CoffeesController } from './coffees.controller';
-import { CoffeeRepository, CoffeesService } from './coffees.service';
+import { CoffeesService } from './coffees.service';
 
 @Global()
 @Module({
+  imports: [RepositoryModule],
   controllers: [CoffeesController],
-  providers: [CoffeesService, CoffeeRepository],
+  providers: [CoffeesService],
   exports: [CoffeesService],
 })
 export class CoffeesModule {}

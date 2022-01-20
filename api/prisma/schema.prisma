@@ -7,82 +7,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model coffee_stock_activities {
-  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  coffee_stock_id String?        @db.Uuid
-  amount          Int?
-  memo            String?
-  create_at       DateTime?      @default(dbgenerated("'2022-01-18 15:13:44.183892'::timestamp without time zone")) @db.Timestamp(6)
-  coffee_stocks   coffee_stocks? @relation(fields: [coffee_stock_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  receipts        receipts[]
-}
-
 model coffee_stocks {
-  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id                 String                    @db.Uuid
-  coffee_id               String                    @db.Uuid
-  amount                  Int?
-  create_at               DateTime?                 @default(dbgenerated("'2022-01-18 15:13:44.183892'::timestamp without time zone")) @db.Timestamp(6)
-  coffees                 coffees                   @relation(fields: [coffee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users                   users                     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  coffee_stock_activities coffee_stock_activities[]
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id   String    @db.Uuid
+  coffee_id String    @db.Uuid
+  amount    Int?
+  place     String?
+  memo      String?
+  create_at DateTime? @default(dbgenerated("'2022-01-19 11:49:34.124324'::timestamp without time zone")) @db.Timestamp(6)
+  coffees   coffees   @relation(fields: [coffee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users     users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model coffees {
   id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user_id       String?         @db.Uuid
   name          String?
-  create_at     DateTime?       @default(dbgenerated("'2022-01-18 15:13:44.183892'::timestamp without time zone")) @db.Timestamp(6)
+  memo          String?
+  create_at     DateTime?       @default(dbgenerated("'2022-01-19 11:49:34.084189'::timestamp without time zone")) @db.Timestamp(6)
   users         users?          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   coffee_stocks coffee_stocks[]
-}
-
-model receipts {
-  id                      String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  activity_id             String                  @db.Uuid
-  store_id                String?                 @db.Uuid
-  memo                    String?
-  create_at               DateTime?               @default(dbgenerated("'2022-01-18 15:13:44.183892'::timestamp without time zone")) @db.Timestamp(6)
-  coffee_stock_activities coffee_stock_activities @relation(fields: [activity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  stores                  stores?                 @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model stores {
-  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id   String     @db.Uuid
-  name      String
-  address   String?
-  create_at DateTime?  @default(dbgenerated("'2022-01-18 15:13:44.183892'::timestamp without time zone")) @db.Timestamp(6)
-  users     users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  receipts  receipts[]
 }
 
 model users {
   id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   nickname        String?
-  email           String?          @unique
-  created_at      DateTime?        @default(dbgenerated("'2022-01-18 15:13:44.183892'::timestamp without time zone")) @db.Timestamp(6)
+  email           String?
   coffee_stocks   coffee_stocks[]
   coffees         coffees[]
-  stores          stores[]
-  user_roles      user_roles[]
   user_securities user_securities?
-}
-
-model roles {
-  id         Int          @id
-  name       String?
-  is_admin   Int?
-  user_roles user_roles[]
-}
-
-model user_roles {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id   String?   @db.Uuid
-  role_id   Int?
-  create_at DateTime? @default(dbgenerated("'2022-01-18 15:13:44.183892'::timestamp without time zone")) @db.Timestamp(6)
-  roles     roles?    @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users     users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model user_securities {

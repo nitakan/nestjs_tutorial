@@ -10,8 +10,4 @@ export class CreateUserDto {
 
     @IsString()
     readonly password: string;
-
-    @IsBoolean()
-    @IsOptional()
-    readonly isAdmin: boolean;  
 }

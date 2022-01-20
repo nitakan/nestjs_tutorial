@@ -1,15 +1,27 @@
-import { IsInt, IsOptional, IsString } from "class-validator";
+import { IsInt, IsOptional, IsString, ValidateNested } from "class-validator";
 
-export class CreateCoffeeDto {
+export class CreateCoffeeStockDto {
+    @IsInt()
+    @IsOptional()
+    readonly count: number;
 
     @IsString()
     readonly name: string;
 
     @IsString()
     @IsOptional()
-    readonly brand: string;
+    readonly memo: string;
+}
 
-    @IsInt()
+export class CreateCoffeeDto {
+
+    @IsString()
+    readonly name: string;
+
     @IsOptional()
-    readonly count: number;
+    @IsString()
+    readonly memo: string;
+
+    @ValidateNested({ each: true })
+    readonly stocks: CreateCoffeeStockDto[];
 }

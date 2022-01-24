@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { CoffeeRepository, StockRepository } from "src/domain/repository_interface/coffee.repository";
 import { UserRepository } from "../domain/repository_interface/user.repository";
-import { CoffeeRepositoryImpl, StockRepositoryImpl } from "./coffee.repository";
-import { UserRepositoryImpl } from "./user.repository";
+import { CoffeeRepositoryImpl, StockRepositoryImpl } from "./prisma/coffee.repository";
+import { UserRepositoryImpl } from "./prisma/user.repository";
 
 
 @Module({

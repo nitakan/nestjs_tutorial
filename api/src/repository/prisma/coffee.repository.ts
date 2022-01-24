@@ -7,7 +7,6 @@ import { BaseRepository } from "./base.repository";
 @Injectable()
 export class CoffeeRepositoryImpl extends BaseRepository implements CoffeeRepository {
     async all(userId: string, pagination: PaginationContext): Promise<Pagination<CoffeeStocks[]>> {
-        console.log({userId, pagination});
         const [count, result] = await this.$transaction([
             this.coffees.count({
                 where: {
@@ -33,7 +32,6 @@ export class CoffeeRepositoryImpl extends BaseRepository implements CoffeeReposi
             coffees,
             PaginationMetaData.from(pagination, count),
         );
-        console.log(r);
         return r;
     }
     async findBy(id: string): Promise<Coffee> {

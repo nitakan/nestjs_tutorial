@@ -66,7 +66,6 @@ export class UserRepositoryImpl extends BaseRepository implements UserRepository
                 );
             }
         } catch (e) {
-            console.log(e);
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 throw new UnprocessableEntityException({
                     property: e.meta,

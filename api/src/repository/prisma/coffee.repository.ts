@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { Coffee, CoffeeStocks, CreateCoffee, Stock } from "src/domain/entity/coffee.model";
-import { Pagination, PaginationContext, PaginationMetaData } from "src/domain/entity/request.entity";
+import { Paginated, PaginationContext, PaginationMetaData } from "src/domain/entity/request.entity";
 import { CoffeeRepository, StockRepository } from "src/domain/repository_interface/coffee.repository";
 import { BasePrismaRepository } from "./base.repository";
 
 @Injectable()
 export class CoffeeRepositoryPrismaImpl extends BasePrismaRepository implements CoffeeRepository {
-    async all(userId: string, pagination: PaginationContext): Promise<Pagination<CoffeeStocks[]>> {
+    async all(userId: string, pagination: PaginationContext): Promise<Paginated<CoffeeStocks[]>> {
         const [count, result] = await this.$transaction([
             this.coffees.count({
                 where: {
@@ -28,21 +28,21 @@ export class CoffeeRepositoryPrismaImpl extends BasePrismaRepository implements 
             )]);
         const coffees = result
             .map(c => new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), c.coffee_stocks.map(s => new Stock(s.id, s.amount, s.memo))));
-        const r = new Pagination(
+        const r = new Paginated(
             coffees,
             PaginationMetaData.from(pagination, count),
         );
         return r;
     }
-    async findBy(id: string): Promise<Coffee> {
+    async findBy(id: string): Promise<CoffeeStocks> {
         const c = await this.coffees.findFirst({
             where: {
                 id: id,
             },
         });
-        return new Coffee(c.id, c.name, '', c.create_at);
+        return new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), []);
     }
-    async create(userId: string, coffee: CreateCoffee): Promise<Coffee> {
+    async create(userId: string, coffee: CreateCoffee): Promise<CoffeeStocks> {
         const c = await this.coffees.create({
             data: {
                 user_id: userId,
@@ -60,7 +60,7 @@ export class CoffeeRepositoryPrismaImpl extends BasePrismaRepository implements 
                 }
             }
         });
-        return new Coffee(c.id, c.name, '', c.create_at);
+        return new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), []);
     }
 
 }

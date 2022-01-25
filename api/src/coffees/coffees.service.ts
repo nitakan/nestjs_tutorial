@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CoffeeStocks, CreateCoffee, CreateStock } from '../domain/entity/coffee.model';
 import { CoffeeRepository, StockRepository } from 'src/domain/repository_interface/coffee.repository';
-import { Pagination, RequestContext } from 'src/domain/entity/request.entity';
+import { Paginated, RequestContext } from 'src/domain/entity/request.entity';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 
 
@@ -10,7 +10,7 @@ export class CoffeesService {
     
     constructor(private readonly repo: CoffeeRepository, private readonly stockRepositoy: StockRepository){}
 
-    async getAllCoffees(request: RequestContext): Promise<Pagination<CoffeeStocks[]>> {
+    async getAllCoffees(request: RequestContext): Promise<Paginated<CoffeeStocks[]>> {
         const result = await this.repo.all(request.user.id, request.pagination);
         return result;
     }

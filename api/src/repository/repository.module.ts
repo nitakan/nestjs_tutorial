@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { CoffeeRepository, StockRepository } from "src/domain/repository_interface/coffee.repository";
 import { UserRepository } from "../domain/repository_interface/user.repository";
-import { CoffeeRepositoryImpl, StockRepositoryImpl } from "./prisma/coffee.repository";
+import { CoffeeRepositoryPrismaImpl, StockRepositoryImpl } from "./prisma/coffee.repository";
 import { UserRepositoryImpl } from "./prisma/user.repository";
 
 
@@ -13,7 +13,7 @@ import { UserRepositoryImpl } from "./prisma/user.repository";
         },
         {
             provide: CoffeeRepository,
-            useClass: CoffeeRepositoryImpl,
+            useClass: CoffeeRepositoryPrismaImpl,
         },
         {
             provide: StockRepository,

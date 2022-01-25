@@ -1,12 +1,9 @@
 import { INestApplication, OnModuleInit } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client"
 import { Pagination, PaginationContext } from "src/domain/entity/request.entity";
-export type Proc<T> = () => Promise<T>;
+import { RepositoryInterface } from "../base.repository";
 
-export interface RepositoryInterface {
-    withPagination<T>(proc: Proc<T>): Promise<Pagination<T>>;
-}
-export class BaseRepository extends PrismaClient implements OnModuleInit {
+export class BasePrismaRepository extends PrismaClient implements OnModuleInit, RepositoryInterface {
     async onModuleInit() {
         await this.$connect();
     }

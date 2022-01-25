@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { UserRepository } from "src/domain/repository_interface/user.repository";
-import { BaseRepository } from "./base.repository";
+import { BasePrismaRepository } from "./base.repository";
 import * as bcrypt from "bcrypt";
 import { CreateUser, User } from "src/domain/entity/user.entity";
 import { Prisma } from "@prisma/client";
 
 @Injectable()
-export class UserRepositoryImpl extends BaseRepository implements UserRepository {
+export class UserRepositoryImpl extends BasePrismaRepository implements UserRepository {
     async check(email: string, password: string): Promise<User | null> {
         const result = await this.users.findFirst({
             where: {

@@ -2,10 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { Coffee, CoffeeStocks, CreateCoffee, Stock } from "src/domain/entity/coffee.model";
 import { Pagination, PaginationContext, PaginationMetaData } from "src/domain/entity/request.entity";
 import { CoffeeRepository, StockRepository } from "src/domain/repository_interface/coffee.repository";
-import { BaseRepository } from "./base.repository";
+import { BasePrismaRepository } from "./base.repository";
 
 @Injectable()
-export class CoffeeRepositoryImpl extends BaseRepository implements CoffeeRepository {
+export class CoffeeRepositoryPrismaImpl extends BasePrismaRepository implements CoffeeRepository {
     async all(userId: string, pagination: PaginationContext): Promise<Pagination<CoffeeStocks[]>> {
         const [count, result] = await this.$transaction([
             this.coffees.count({
@@ -66,7 +66,7 @@ export class CoffeeRepositoryImpl extends BaseRepository implements CoffeeReposi
 }
 
 @Injectable()
-export class StockRepositoryImpl extends BaseRepository implements StockRepository {
+export class StockRepositoryImpl extends BasePrismaRepository implements StockRepository {
     async all(userId: string): Promise<CoffeeStocks[]> {
         const result = await this.coffees.findMany({
             where: {

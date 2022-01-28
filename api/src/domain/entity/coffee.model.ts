@@ -11,6 +11,7 @@ export class Stock {
         public id: string,
         public count: number,
         public place: string,
+        public createdAt: Date,
         public memo?: string,
     ) {}
 }

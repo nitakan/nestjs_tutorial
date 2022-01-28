@@ -3,6 +3,7 @@ import { CoffeeStocks, CreateCoffee, CreateStock } from '../domain/entity/coffee
 import { CoffeeRepository, StockRepository } from 'src/domain/repository_interface/coffee.repository';
 import { Paginated, RequestContext } from 'src/domain/entity/request.entity';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
+import { ProcessEnvOptions } from 'child_process';
 
 
 @Injectable()
@@ -20,13 +21,14 @@ export class CoffeesService {
         return result;
     }
 
-    async createCoffee(request: RequestContext, coffee: CreateCoffeeDto) {
+    async createCoffee(request: RequestContext, coffee: CreateCoffeeDto): Promise<CoffeeStocks> {
         const create = new CreateCoffee(
             coffee.name,
             coffee.memo,
             coffee.stocks.map(s => new CreateStock(s.count, s.name, s.memo)));
     
         const result = await this.repo.create(request.user.id, create);
+        return result;
     }
 
 }

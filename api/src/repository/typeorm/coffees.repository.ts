@@ -1,17 +1,19 @@
-import { BadRequestException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
+import { InjectConnection, InjectRepository } from "@nestjs/typeorm";
 import { CoffeeStocks, CreateCoffee } from "src/domain/entity/coffee.model";
 import { PaginationContext, Paginated } from "src/domain/entity/request.entity";
 import { CoffeeRepository } from "src/domain/repository_interface/coffee.repository";
-import { Repository } from "typeorm";
+import { Connection, Repository } from "typeorm";
 import { BaseTypeORMRepository } from "./base.repository";
-import { CoffeeEntity } from "./entity/coffee.entity";
+import { CoffeeEntity, CoffeeStockEntity } from "./entity/coffee.entity";
 
 export class CoffeeRepositoryTypeORMImpl extends BaseTypeORMRepository implements CoffeeRepository {
 
     constructor(
         @InjectRepository(CoffeeEntity)
         private readonly dataSource: Repository<CoffeeEntity>,
+
+        @InjectConnection()
+        private readonly connection: Connection,
     ) {
         super();
     }
@@ -39,7 +41,27 @@ export class CoffeeRepositoryTypeORMImpl extends BaseTypeORMRepository implement
         );
     }
     async create(userId: string, coffee: CreateCoffee): Promise<CoffeeStocks> {
-        throw new BadRequestException();
+        const created = this.dataSource.create();
+        created.userId = userId;
+        created.name = coffee.name;
+        created.memo = coffee.memo;
+        var coffeeId: string;
+console.log(coffee);
+        await this.connection.manager.transaction(async (tran) => {
+            const saved = await tran.save(created);
+            coffeeId = saved.id;
+
+            for (const stock of coffee.stocks) {
+                const s = new CoffeeStockEntity();
+                s.userId = userId;
+                s.coffeeId = coffeeId;
+                s.amount = stock.count;
+                s.memo = stock.memo;
+                s.place = stock.place;
+                await tran.save(s);
+            }
+        });
+        return await this.findBy(coffeeId);
     }
 
 }

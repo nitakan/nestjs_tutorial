@@ -25,7 +25,8 @@ DROP TABLE IF EXISTS public.coffee_stocks CASCADE;
 CREATE TABLE public.users (
     id uuid PRIMARY KEY DEFAULT(gen_random_uuid()),
     nickname text,
-	email text
+	email text,
+    create_at TIMESTAMP  DEFAULT now()
 );
 
 CREATE TABLE public.user_securities (
@@ -39,7 +40,7 @@ CREATE TABLE public.coffees (
     user_id uuid,
     name text,
     memo text,
-    create_at TIMESTAMP  default 'now',
+    create_at TIMESTAMP  DEFAULT now(),
     foreign key (user_id) references public.users(id)
 );
 
@@ -50,7 +51,7 @@ CREATE TABLE public.coffee_stocks (
     amount int,
     place text,
     memo text,
-    create_at TIMESTAMP  default 'now',
+    create_at TIMESTAMP  DEFAULT now(),
     foreign key (user_id) references public.users(id),
     foreign key (coffee_id) references public.coffees(id)
 );

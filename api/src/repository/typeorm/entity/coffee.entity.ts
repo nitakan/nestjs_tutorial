@@ -108,6 +108,7 @@ export class CoffeeStockEntity {
             this.id,
             this.amount,
             this.place,
+            this.createAt,
             this.memo,
         );
     }

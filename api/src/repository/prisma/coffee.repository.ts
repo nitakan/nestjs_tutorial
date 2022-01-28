@@ -27,7 +27,7 @@ export class CoffeeRepositoryPrismaImpl extends BasePrismaRepository implements 
             },
             )]);
         const coffees = result
-            .map(c => new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), c.coffee_stocks.map(s => new Stock(s.id, s.amount, s.memo))));
+            .map(c => new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), c.coffee_stocks.map(s => new Stock(s.id, s.amount, s.place, s.create_at, s.memo))));
         const r = new Paginated(
             coffees,
             PaginationMetaData.from(pagination, count),
@@ -77,7 +77,7 @@ export class StockRepositoryImpl extends BasePrismaRepository implements StockRe
             }
         });
         return result
-            .map(c => new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), c.coffee_stocks.map(s => new Stock(s.id, s.amount, s.memo))));
+            .map(c => new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), c.coffee_stocks.map(s => new Stock(s.id, s.amount, s.place, s.create_at, s.memo))));
     }
     async add(userId: string, coffeeId: string, stock: Stock): Promise<Stock> {
         const result = await this.coffee_stocks.create({
@@ -89,6 +89,6 @@ export class StockRepositoryImpl extends BasePrismaRepository implements StockRe
                 place: stock.place,
             }
         });
-        return new Stock(result.id, result.amount, result.place, result.memo);
+        return new Stock(result.id, result.amount, result.place, result.create_at, result.memo);
     }
 }

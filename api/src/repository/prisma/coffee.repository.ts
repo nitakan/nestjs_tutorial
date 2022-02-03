@@ -1,13 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { Coffee, CoffeeStocks, CreateCoffee, Stock } from "src/domain/entity/coffee.model";
-import { Pagination, PaginationContext, PaginationMetaData } from "src/domain/entity/request.entity";
+import { Paginated, PaginationContext, PaginationMetaData } from "src/domain/entity/request.entity";
 import { CoffeeRepository, StockRepository } from "src/domain/repository_interface/coffee.repository";
-import { BaseRepository } from "./base.repository";
+import { BasePrismaRepository } from "./base.repository";
 
 @Injectable()
-export class CoffeeRepositoryImpl extends BaseRepository implements CoffeeRepository {
-    async all(userId: string, pagination: PaginationContext): Promise<Pagination<CoffeeStocks[]>> {
-        console.log({userId, pagination});
+export class CoffeeRepositoryPrismaImpl extends BasePrismaRepository implements CoffeeRepository {
+    async all(userId: string, pagination: PaginationContext): Promise<Paginated<CoffeeStocks[]>> {
         const [count, result] = await this.$transaction([
             this.coffees.count({
                 where: {
@@ -28,23 +27,22 @@ export class CoffeeRepositoryImpl extends BaseRepository implements CoffeeReposi
             },
             )]);
         const coffees = result
-            .map(c => new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), c.coffee_stocks.map(s => new Stock(s.id, s.amount, s.memo))));
-        const r = new Pagination(
+            .map(c => new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), c.coffee_stocks.map(s => new Stock(s.id, s.amount, s.place, s.create_at, s.memo))));
+        const r = new Paginated(
             coffees,
             PaginationMetaData.from(pagination, count),
         );
-        console.log(r);
         return r;
     }
-    async findBy(id: string): Promise<Coffee> {
+    async findBy(id: string): Promise<CoffeeStocks> {
         const c = await this.coffees.findFirst({
             where: {
                 id: id,
             },
         });
-        return new Coffee(c.id, c.name, '', c.create_at);
+        return new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), []);
     }
-    async create(userId: string, coffee: CreateCoffee): Promise<Coffee> {
+    async create(userId: string, coffee: CreateCoffee): Promise<CoffeeStocks> {
         const c = await this.coffees.create({
             data: {
                 user_id: userId,
@@ -62,13 +60,13 @@ export class CoffeeRepositoryImpl extends BaseRepository implements CoffeeReposi
                 }
             }
         });
-        return new Coffee(c.id, c.name, '', c.create_at);
+        return new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), []);
     }
 
 }
 
 @Injectable()
-export class StockRepositoryImpl extends BaseRepository implements StockRepository {
+export class StockRepositoryImpl extends BasePrismaRepository implements StockRepository {
     async all(userId: string): Promise<CoffeeStocks[]> {
         const result = await this.coffees.findMany({
             where: {
@@ -79,7 +77,7 @@ export class StockRepositoryImpl extends BaseRepository implements StockReposito
             }
         });
         return result
-            .map(c => new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), c.coffee_stocks.map(s => new Stock(s.id, s.amount, s.memo))));
+            .map(c => new CoffeeStocks(new Coffee(c.id, c.name, '', c.create_at), c.coffee_stocks.map(s => new Stock(s.id, s.amount, s.place, s.create_at, s.memo))));
     }
     async add(userId: string, coffeeId: string, stock: Stock): Promise<Stock> {
         const result = await this.coffee_stocks.create({
@@ -91,6 +89,6 @@ export class StockRepositoryImpl extends BaseRepository implements StockReposito
                 place: stock.place,
             }
         });
-        return new Stock(result.id, result.amount, result.place, result.memo);
+        return new Stock(result.id, result.amount, result.place, result.create_at, result.memo);
     }
 }

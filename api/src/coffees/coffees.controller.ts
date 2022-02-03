@@ -17,7 +17,7 @@ export class CoffeesController {
 
     @Post()
     create(@Body() body: CreateCoffeeDto, @ReqCtx() context) {
-        this.coffeesService.createCoffee(
+        return this.coffeesService.createCoffee(
             context, 
             body,
         );

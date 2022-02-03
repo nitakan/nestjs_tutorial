@@ -9,6 +9,7 @@ import { JwtAuthGuard } from './auth/model/jwt/jwt-auth.guard';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
 import { RepositoryModule } from './repository/repository.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RepositoryModule } from './repository/repository.module';
       ttl: 60, limit: 10,
     }),
     ConfigModule.forRoot(),
+    TypeOrmModule.forRoot(),
   ],
   controllers: [
     AppController,

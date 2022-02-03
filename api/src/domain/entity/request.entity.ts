@@ -25,8 +25,8 @@ export class PaginationContext {
 
     static fromRequest(request: any): PaginationContext {
         
-        const limit = request.limit as number || null;
-        const page = request.page as number  || null;
+        const limit = Number.parseInt(request.query.limit) || null;
+        const page = Number.parseInt(request.query.page) || null;
     
         return new PaginationContext(limit, page);
     }
@@ -65,8 +65,8 @@ export class PaginationMetaData {
             const hasNext = page > currentPage;
             const hasPrev = currentPage > 1;
             return new PaginationMetaData(
-                currentPage,
-                context.limit,
+                currentPage as number,
+                context.limit as number,
                 hasNext,
                 hasPrev,
                 count,
@@ -76,9 +76,14 @@ export class PaginationMetaData {
 
 }
 
-export class Pagination<T> {
+export class Paginated<T> {
     constructor(
         public data: T,
-        public meta: PaginationMetaData,
+        public pagination: PaginationMetaData,
     ) {}
+
+    public static of<T>(data: T, meta: PaginationMetaData) {
+        return new Paginated(data, meta);
+    }
+
 }
